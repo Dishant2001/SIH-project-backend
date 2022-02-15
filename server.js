@@ -2,10 +2,17 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes")
+const session = require('express-session');
 
 const app = express();
 dotenv.config();
 app.use(express.json());
+
+app.use(session({
+  secret: '2C44-4D44-WppQ38S',
+  resave: true,
+  saveUninitialized: true
+}));
 
 //connect to mongodb
 const uri = process.env.DB_URL;
