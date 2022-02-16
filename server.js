@@ -10,8 +10,9 @@ app.use(express.json());
 
 app.use(session({
   secret: '2C44-4D44-WppQ38S',
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: true,
+  cookie:{secure:true}
 }));
 
 //connect to mongodb

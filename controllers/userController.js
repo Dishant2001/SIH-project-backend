@@ -40,6 +40,7 @@ const loginUser = asyncHandler(async (req,res) => {
 
 const logoutUser = asyncHandler(async (req,res) => {
     req.session.destroy();
+    logged=false;
     res.send("logout success!");
 });
 
