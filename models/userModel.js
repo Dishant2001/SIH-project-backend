@@ -1,6 +1,23 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
+
+const projectSchema = mongoose.Schema(
+    {
+        name:{
+            type: String,
+            default:"project"
+        },
+        description:{
+            type: String,
+            default:"project"
+        },
+
+    }
+);
+
+
+
 const userSchema = mongoose.Schema(
 {
     name: {
@@ -19,7 +36,8 @@ const userSchema = mongoose.Schema(
     role: {
         type: String,
         required: true,
-    }    
+    },
+    project: projectSchema,    
 },
 {
     timestamps: true,
