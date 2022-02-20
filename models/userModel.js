@@ -5,14 +5,25 @@ const bcrypt = require('bcryptjs')
 const projectSchema = mongoose.Schema(
     {
         name:{
-            type: String,
-            default:"project"
+            type: String
+            // default:"project"
         },
         description:{
-            type: String,
-            default:"project"
+            type: String
+            // default:"project"
         },
-
+        funds_proposed:{
+            type: Number
+            // default:0.0,
+        },
+        funds_approved:{
+            type: Number
+            // default:0.0,
+        },
+        funds_used:{
+            type: Number
+            // default:0.0,
+        }
     }
 );
 
@@ -37,7 +48,7 @@ const userSchema = mongoose.Schema(
         type: String,
         required: true,
     },
-    project: projectSchema,    
+    project: new Array(projectSchema),    
 },
 {
     timestamps: true,
