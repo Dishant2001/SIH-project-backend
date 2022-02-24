@@ -79,14 +79,14 @@ const registerUser = asyncHandler(async (req,res) => {
 });
 
 const addProject = asyncHandler(async (req,res) => {
-    const {name, description, funds_proposed, funds_approved, funds_used } = req.body;
+    const {name, description, funds_proposed, funds_approved, funds_used, category, duration } = req.body;
 
     const userExists = await User.findOne({ EmailId });
 
     if(logged && userExists){
 
         const user = await User.updateOne({email:EmailId},{$push:{ project:
-            {name, description,funds_proposed,funds_approved,funds_used}
+            {name, description,funds_proposed,funds_approved,funds_used, category, duration}
            }})
        
            if(user){
