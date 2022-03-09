@@ -1,6 +1,39 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
+
+const projectSchema = mongoose.Schema(
+    {
+        name:{
+            type: String
+        },
+        description:{
+            type: String
+        },
+        funds_proposed:{
+            type: Number
+        },
+        funds_approved:{
+            type: Number
+        },
+        funds_used:{
+            type: Number
+        },
+        category:{
+            type: Boolean,  //true for public, false for private
+            default: false
+        },
+        duration:{
+            type: Number
+        }
+    },
+    {
+        timestamps: true,
+    }
+);
+
+
+
 const userSchema = mongoose.Schema(
 {
     name: {
@@ -19,7 +52,12 @@ const userSchema = mongoose.Schema(
     role: {
         type: String,
         required: true,
-    }    
+    },
+    fa_category:{    
+        type: String,    //private, government, government-aided
+        default: "N/A"
+    },
+    project: new Array(projectSchema),    
 },
 {
     timestamps: true,

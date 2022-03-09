@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler');
 const generateToken = require('../utils/generateToken');
 
 var logged = false;
+var EmailId = '';
 
 const loginUser = asyncHandler(async (req,res) => {
     const {email, password } = req.body;
@@ -13,6 +14,7 @@ const loginUser = asyncHandler(async (req,res) => {
         
         req.session.loggedin = true;
         req.session.user = email;
+        EmailId = email;
         logged = true;
         
         res.json({
@@ -41,6 +43,7 @@ const loginUser = asyncHandler(async (req,res) => {
 const logoutUser = asyncHandler(async (req,res) => {
     req.session.destroy();
     logged=false;
+    EmailId='';
     res.send("logout success!");
 });
 
@@ -75,5 +78,39 @@ const registerUser = asyncHandler(async (req,res) => {
 
 });
 
+const addProject = asyncHandler(async (req,res) => {
+    const {name, description, funds_proposed, funds_approved, funds_used, category, duration } = req.body;
 
-module.exports = { registerUser, loginUser, logoutUser };
+    const userExists = await User.findOne({ EmailId });
+
+    if(logged && userExists){
+
+        const user = await User.updateOne({email:EmailId},{$push:{ project:
+            {name, description,funds_proposed,funds_approved,funds_used, category, duration}
+           }})
+       
+           if(user){
+               res.status(201).json({
+                   _id: user._id,
+                   name: user.name,
+                   email: user.email,
+                   role: user.role,
+                   project:user.project,
+                   token: generateToken(user._id)
+               });
+       
+           }else{
+               res.status(400);
+               throw new Error("Error occured");
+           }
+    }else{
+        res.status(400);
+        throw new Error('First login'); 
+    }
+
+    
+
+});
+
+
+module.exports = { registerUser, loginUser, logoutUser, addProject };
