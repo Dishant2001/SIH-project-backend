@@ -113,4 +113,50 @@ const addProject = asyncHandler(async (req,res) => {
 });
 
 
-module.exports = { registerUser, loginUser, logoutUser, addProject };
+const heiprojects = asyncHandler(async (req,res) => {
+    // const {email, password } = req.body;
+
+    // const user = await User.findOne({ email });
+
+    if(logged){
+        
+        console.log(EmailId);
+        const projects = await User.findOne({email:EmailId});
+        console.log(projects.project);
+        // res.status(200);
+        
+        res.json({
+            projects:projects.project
+        });
+        /* Session after login:
+
+                Session {
+                    cookie: { path: '/', _expires: null, originalMaxAge: null, httpOnly: true },
+                    loggedin: true,
+                    user: 'email3'
+                }
+
+            */
+
+    }else{
+        res.status(401);
+        throw new Error("Incorrect email or password");
+    }
+});
+
+const heilist = asyncHandler(async (req,res) => {
+    // const {email, password } = req.body;
+
+    // const user = await User.findOne({ email });
+
+        const heis = await User.find({role:{$in:["hei","HEI"]}});
+        console.log(heis);
+        // res.status(200);
+        
+        res.json({
+            list:heis
+        });
+});
+
+
+module.exports = { registerUser, loginUser, logoutUser, addProject, heiprojects, heilist };

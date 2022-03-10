@@ -23,6 +23,10 @@ const projectSchema = mongoose.Schema(
             type: Boolean,  //true for public, false for private
             default: false
         },
+        status:{
+            type:String,
+            default:"none"
+        },
         duration:{
             type: Number
         }
