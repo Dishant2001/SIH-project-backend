@@ -79,14 +79,14 @@ const registerUser = asyncHandler(async (req,res) => {
 });
 
 const addProject = asyncHandler(async (req,res) => {
-    const {name, description, funds_proposed, funds_approved, funds_used, category, duration } = req.body;
+    const {name, description, funds_proposed, funds_approved, funds_used, category,status, duration } = req.body;
 
     const userExists = await User.findOne({ EmailId });
 
     if(logged && userExists){
 
         const user = await User.updateOne({email:EmailId},{$push:{ project:
-            {name, description,funds_proposed,funds_approved,funds_used, category, duration}
+            {name, description,funds_proposed,funds_approved,funds_used, category,status, duration}
            }})
        
            if(user){
@@ -113,7 +113,7 @@ const addProject = asyncHandler(async (req,res) => {
 });
 
 
-const heiprojects = asyncHandler(async (req,res) => {
+const applied = asyncHandler(async (req,res) => {
     // const {email, password } = req.body;
 
     // const user = await User.findOne({ email });
@@ -122,12 +122,95 @@ const heiprojects = asyncHandler(async (req,res) => {
         
         console.log(EmailId);
         const projects = await User.findOne({email:EmailId});
-        console.log(projects.project);
+        // console.log(projects.project);
+        // console.log(projects.project);
         // res.status(200);
+        const applied=[];
+        for(var i=0;i<projects.project.length;++i){
+            // console.log(JSON.stringify(projects.project.status));
+            if(projects.project[i].status=="applied"){
+                // console.log(projects.project[i]);
+                applied.push(projects.project[i]);
+            }
+        }
         
-        res.json({
-            projects:projects.project
-        });
+        res.json(applied);
+        /* Session after login:
+
+                Session {
+                    cookie: { path: '/', _expires: null, originalMaxAge: null, httpOnly: true },
+                    loggedin: true,
+                    user: 'email3'
+                }
+
+            */
+
+    }else{
+        res.status(401);
+        throw new Error("Incorrect email or password");
+    }
+});
+
+const ongoing = asyncHandler(async (req,res) => {
+    // const {email, password } = req.body;
+
+    // const user = await User.findOne({ email });
+
+    if(logged){
+        
+        console.log(EmailId);
+        const projects = await User.findOne({email:EmailId});
+        // console.log(projects.project);
+        // console.log(projects.project);
+        // res.status(200);
+        const ongoing=[];
+        for(var i=0;i<projects.project.length;++i){
+            // console.log(JSON.stringify(projects.project.status));
+            if(projects.project[i].status=="ongoing"){
+                // console.log(projects.project[i]);
+                ongoing.push(projects.project[i]);
+            }
+        }
+        
+        res.json(ongoing);
+        /* Session after login:
+
+                Session {
+                    cookie: { path: '/', _expires: null, originalMaxAge: null, httpOnly: true },
+                    loggedin: true,
+                    user: 'email3'
+                }
+
+            */
+
+    }else{
+        res.status(401);
+        throw new Error("Incorrect email or password");
+    }
+});
+
+const completed = asyncHandler(async (req,res) => {
+    // const {email, password } = req.body;
+
+    // const user = await User.findOne({ email });
+
+    if(logged){
+        
+        console.log(EmailId);
+        const projects = await User.findOne({email:EmailId});
+        // console.log(projects.project);
+        // console.log(projects.project);
+        // res.status(200);
+        const completed=[];
+        for(var i=0;i<projects.project.length;++i){
+            // console.log(JSON.stringify(projects.project.status));
+            if(projects.project[i].status=="completed"){
+                // console.log(projects.project[i]);
+                completed.push(projects.project[i]);
+            }
+        }
+        
+        res.json(completed);
         /* Session after login:
 
                 Session {
@@ -153,10 +236,8 @@ const heilist = asyncHandler(async (req,res) => {
         console.log(heis);
         // res.status(200);
         
-        res.json({
-            list:heis
-        });
+        res.json(heis);
 });
 
 
-module.exports = { registerUser, loginUser, logoutUser, addProject, heiprojects, heilist };
+module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist };
