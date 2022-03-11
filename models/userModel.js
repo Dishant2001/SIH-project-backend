@@ -10,6 +10,14 @@ const projectSchema = mongoose.Schema(
         description:{
             type: String
         },
+        applied:{
+            type:Boolean,
+            default:false
+        },
+        fa_applied:{
+            type:String,
+            default:"none"
+        },
         funds_proposed:{
             type: Number
         },
