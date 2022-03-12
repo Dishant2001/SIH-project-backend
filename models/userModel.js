@@ -44,7 +44,17 @@ const projectSchema = mongoose.Schema(
     }
 );
 
-
+const applySchema = mongoose.Schema(
+    {
+        hei:{
+            type:String
+        },
+        project:new Array(projectSchema)
+    },
+    {
+        timestamps: true,
+    }
+);
 
 const userSchema = mongoose.Schema(
 {
@@ -69,6 +79,7 @@ const userSchema = mongoose.Schema(
         type: String,    //private, government, government-aided
         default: "N/A"
     },
+    fa_applications:new Array(applySchema),
     project: new Array(projectSchema),    
 },
 {

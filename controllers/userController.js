@@ -239,5 +239,17 @@ const heilist = asyncHandler(async (req,res) => {
         res.json(heis);
 });
 
+const falist = asyncHandler(async (req,res) => {
+    // const {email, password } = req.body;
 
-module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist };
+    // const user = await User.findOne({ email });
+
+        const fa = await User.find({role:{$in:["fa","FA"]}});
+        console.log(fa);
+        // res.status(200);
+        
+        res.json(fa);
+});
+
+
+module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist };

@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, logoutUser, addProject, heiprojects, heilist, applied, ongoing, completed } = require("../controllers/userController");
+const { registerUser, loginUser, logoutUser, addProject, heiprojects, heilist, applied, ongoing, completed,falist } = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -14,6 +14,7 @@ router.route("/applied").post(applied);
 router.route("/ongoing").post(ongoing);
 router.route("/completed").post(completed);
 router.route("/heilist").get(heilist);
+router.route("/falist").get(falist);
 
 
 module.exports = router;
