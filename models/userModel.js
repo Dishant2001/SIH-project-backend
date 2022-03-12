@@ -49,7 +49,10 @@ const applySchema = mongoose.Schema(
         hei:{
             type:String
         },
-        project:new Array(projectSchema)
+        // project:new Array(String)
+        project:{
+            type:String
+        }
     },
     {
         timestamps: true,

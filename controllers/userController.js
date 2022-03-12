@@ -1,7 +1,7 @@
 const User = require('../models/userModel')
 const asyncHandler = require('express-async-handler');
 const generateToken = require('../utils/generateToken');
-
+const mongoose = require('mongoose')
 var logged = false;
 var EmailId = '';
 
@@ -251,5 +251,59 @@ const falist = asyncHandler(async (req,res) => {
         res.json(fa);
 });
 
+var projectId='';
 
-module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist };
+const getProjectId = asyncHandler(async (req, res)=>{
+    projectId = req.params['_id'];
+    console.log(projectId);
+});
+
+const applytofa = asyncHandler(async (req,res) => {
+    const faemail = req.params['_id'];
+    console.log(faemail);
+    // const {name, description, funds_proposed, funds_approved, funds_used, category,status, duration } = req.body;
+
+    const userExists = await User.findOne({ email:faemail });
+    // const hei = await User.findOne({email:EmailId});
+
+
+    if(logged && userExists){
+
+
+
+        const user = await User.updateOne({email:faemail},{$push:{ fa_applications:
+            {project:projectId,hei:EmailId}
+           }});
+        
+        // const hei = await User.findOneAndUpdate({email:EmailId,"project._id":mongoose.Types.ObjectId(projectId)},{fa_applied:faemail,applied:true});
+        const hei = await User.findOneAndUpdate({email:EmailId,project:{$elemMatch:{_id:mongoose.Types.ObjectId(projectId)}}},{fa_applied:faemail,applied:true});
+
+        console.log(hei);
+
+           if(user&&hei){
+            //    res.status(201).json({
+            //        _id: user._id,
+            //        name: user.name,
+            //        email: user.email,
+            //        role: user.role,
+            //        project:user.project,
+            //        token: generateToken(user._id)
+            //    });
+            console.log("FA, HEI connected");
+            res.status(200).json({_id:projectId,hei:EmailId});
+       
+           }else{
+               res.status(400);
+               throw new Error("Error occured");
+           }
+    }else{
+        res.status(400);
+        throw new Error('First login'); 
+    }
+
+    
+
+});
+
+
+module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist,applytofa,getProjectId };
