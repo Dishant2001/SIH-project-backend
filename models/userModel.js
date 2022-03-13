@@ -10,7 +10,7 @@ const projectSchema = mongoose.Schema(
         description:{
             type: String
         },
-        applied:{
+        accepted:{
             type:Boolean,
             default:false
         },
@@ -49,10 +49,10 @@ const applySchema = mongoose.Schema(
         hei:{
             type:String
         },
-        // project:new Array(String)
-        project:{
-            type:String
-        }
+        project:new Array(String)
+        // project:{
+        //     type:String
+        // }
     },
     {
         timestamps: true,

@@ -256,6 +256,7 @@ var projectId='';
 const getProjectId = asyncHandler(async (req, res)=>{
     projectId = req.params['_id'];
     console.log(projectId);
+    res.status(200).json({_id:projectId});
 });
 
 const applytofa = asyncHandler(async (req,res) => {
@@ -271,14 +272,37 @@ const applytofa = asyncHandler(async (req,res) => {
 
 
 
-        const user = await User.updateOne({email:faemail},{$push:{ fa_applications:
-            {project:projectId,hei:EmailId}
-           }});
+        // const user = await User.updateOne({email:faemail},{$push:{ fa_applications:
+        //     {project:projectId,hei:EmailId}
+        //    }});
+        const user = await User.findOne({email:faemail});
+        var check=-1;
+        for(var i=0;i<user.fa_applications.length;++i){
+            if(user.fa_applications[i].hei==EmailId){
+                user.fa_applications[i].project.push(projectId);
+                check=1;
+                break;
+            }
+        }
+        if(check!=1){
+            user.fa_applications.push({hei:EmailId,project:[projectId]}); 
+        }
+        await user.save();
         
         // const hei = await User.findOneAndUpdate({email:EmailId,"project._id":mongoose.Types.ObjectId(projectId)},{fa_applied:faemail,applied:true});
-        const hei = await User.findOneAndUpdate({email:EmailId,project:{$elemMatch:{_id:mongoose.Types.ObjectId(projectId)}}},{fa_applied:faemail,applied:true});
-
+        const hei = await User.findOne({email:EmailId});
         console.log(hei);
+
+        for(var i=0;i<hei.project.length;++i){
+            if(hei.project[i]._id.toString()==projectId){
+                hei.project[i].fa_applied=faemail;
+                // hei.project[i].applied=true;
+                hei.project[i].status="applied";
+                break;
+            }
+        }
+        await hei.save();
+
 
            if(user&&hei){
             //    res.status(201).json({
@@ -301,9 +325,122 @@ const applytofa = asyncHandler(async (req,res) => {
         throw new Error('First login'); 
     }
 
-    
-
 });
 
 
-module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist,applytofa,getProjectId };
+const acceptApproval = asyncHandler(async (req,res) => {
+    const {email,p_id} = req.body;
+    // const {name, description, funds_proposed, funds_approved, funds_used, category,status, duration } = req.body;
+
+    const userExists = await User.findOne({ email:EmailId });
+    // const hei = await User.findOne({email:EmailId});
+
+
+    if(logged && userExists){
+
+
+
+        // const user = await User.updateOne({email:faemail},{$push:{ fa_applications:
+        //     {project:projectId,hei:EmailId}
+        //    }});
+        const user = await User.findOne({email:email});
+        for(var i=0;i<user.project.length;++i){
+            if(user.project[i]._id.toString()==p_id){
+                user.project[i].accepted=true;
+                break;
+            }
+        }
+        await user.save();
+
+           if(user){
+            //    res.status(201).json({
+            //        _id: user._id,
+            //        name: user.name,
+            //        email: user.email,
+            //        role: user.role,
+            //        project:user.project,
+            //        token: generateToken(user._id)
+            //    });
+            console.log("Proposal accepted");
+            res.status(200).json({hei:email,p_id:p_id});
+       
+           }else{
+               res.status(400);
+               throw new Error("Error occured");
+           }
+    }else{
+        res.status(400);
+        throw new Error('First login'); 
+    }
+
+});
+
+const rejectApproval = asyncHandler(async (req,res) => {
+    const {email,p_id} = req.body;
+    // const {name, description, funds_proposed, funds_approved, funds_used, category,status, duration } = req.body;
+
+    const userExists = await User.findOne({ email:EmailId });
+    // const hei = await User.findOne({email:EmailId});
+
+
+    if(logged && userExists){
+
+
+
+        // const user = await User.updateOne({email:faemail},{$push:{ fa_applications:
+        //     {project:projectId,hei:EmailId}
+        //    }});
+        const user = await User.findOne({email:email});
+        for(var i=0;i<user.project.length;++i){
+            if(user.project[i]._id.toString()==p_id){
+                user.project[i].fa_applied="none";
+                user.project[i].status="none";
+                user.project[i].accepted=false;
+                break;
+            }
+        }
+        await user.save();
+
+        const fa = await User.findOne({email:EmailId});
+        console.log(fa);
+
+        var check=-1;
+        for(var i=0;i<fa.fa_applications.length;++i){
+            if(fa.fa_applications[i].hei==email){
+                check=1;
+                for(var j=0;j<fa.fa_applications[i].project.length;++j){
+                    if(fa.fa_applications[i].project[j]==p_id){
+                        fa.fa_applications[i].project.splice(j,1);
+                        break;
+                    }
+                }
+            }
+            if(check==1)
+                break;
+        }
+        await fa.save();
+
+           if(user&&fa){
+            //    res.status(201).json({
+            //        _id: user._id,
+            //        name: user.name,
+            //        email: user.email,
+            //        role: user.role,
+            //        project:user.project,
+            //        token: generateToken(user._id)
+            //    });
+            console.log("Proposal accepted");
+            res.status(200).json({hei:email,p_id:p_id});
+       
+           }else{
+               res.status(400);
+               throw new Error("Error occured");
+           }
+    }else{
+        res.status(400);
+        throw new Error('First login'); 
+    }
+
+});
+
+module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist,applytofa,getProjectId, acceptApproval,rejectApproval };
