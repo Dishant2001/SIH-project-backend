@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, loginUser, logoutUser, addProject, heiprojects, heilist, applied, ongoing, completed,falist, getProjectId,applytofa, acceptApproval, rejectApproval } = require("../controllers/userController");
+const { registerUser, loginUser, logoutUser, addProject, heiprojects, heilist, applied, ongoing, completed,falist, getProjectId,applytofa, acceptApproval, rejectApproval,fafundings } = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -19,5 +19,6 @@ router.route("/getProjectId/:_id").get(getProjectId);
 router.route("/applytofa/:_id").get(applytofa);
 router.route("/acceptApproval").post(acceptApproval);
 router.route("/rejectApproval").post(rejectApproval)
+router.route("/fafundings/:_id").get(fafundings);
 
 module.exports = router;

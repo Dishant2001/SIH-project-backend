@@ -443,4 +443,67 @@ const rejectApproval = asyncHandler(async (req,res) => {
 
 });
 
-module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist,applytofa,getProjectId, acceptApproval,rejectApproval };
+
+const fafundings = asyncHandler(async (req,res) => {
+    const faemail = req.params['_id'];
+    console.log(faemail);
+    // const {name, description, funds_proposed, funds_approved, funds_used, category,status, duration } = req.body;
+
+    const userExists = await User.findOne({ email:faemail });
+    // const hei = await User.findOne({email:EmailId});
+
+
+    if(logged && userExists){
+
+
+
+        // const user = await User.updateOne({email:faemail},{$push:{ fa_applications:
+        //     {project:projectId,hei:EmailId}
+        //    }});
+        const list=[];
+        const user = await User.findOne({email:faemail});
+        var check=-1;
+        for(var i=0;i<user.fa_applications.length;++i){
+            const hei=user.fa_applications[i].hei;
+            let temp = await User.findOne({email:hei});
+            let heiproject = temp.project;
+            console.log(heiproject);
+            for(var j=0;j<user.fa_applications[i].project.length;++j){
+                for(var k=0;k<heiproject.length;++k){
+                    if(user.fa_applications[i].project[j]==heiproject[k]._id.toString()){
+                        console.log(user.fa_applications[i].project[j]);
+                        console.log(heiproject[k]._id.toString());
+                        list.push(heiproject[k]);
+                    }
+                }
+            }
+        }
+
+        console.log(list);
+
+
+           if(user){
+            //    res.status(201).json({
+            //        _id: user._id,
+            //        name: user.name,
+            //        email: user.email,
+            //        role: user.role,
+            //        project:user.project,
+            //        token: generateToken(user._id)
+            //    });
+            // console.log("FA, HEI connected");
+            res.status(200).json(list);
+       
+           }else{
+               res.status(400);
+               throw new Error("Error occured");
+           }
+    }else{
+        res.status(400);
+        throw new Error('First login'); 
+    }
+
+});
+
+
+module.exports = { registerUser, loginUser, logoutUser, addProject, applied,ongoing,completed, heilist, falist,applytofa,getProjectId, acceptApproval,rejectApproval, fafundings };
